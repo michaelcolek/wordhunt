@@ -272,6 +272,21 @@ box.alr, .tag.alr {
   font-size: 4vw;
   cursor: pointer;
 }
+button.share {
+  position: fixed;
+  left: 85%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  height: 4%;
+  aspect-ratio: 3;
+  background-color: #496a45;
+  border-radius: 3vw;
+  color: white;
+  font-weight: bold;
+  font-size: 4vw;
+  cursor: pointer;
+}
 button:disabled {
   background-color: gray !important;
   cursor: not-allowed;
