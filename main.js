@@ -27,7 +27,7 @@ class Game {
     // if (board) this.board = board; else
     this.board = [];
     if (game == undefined) {
-      this.time = 5;
+      this.time = 80;
       this.score = 0;
       this.words = [];
       this.genletters();
