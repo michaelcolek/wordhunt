@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Static Template</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="cont">
+      <div id="scoreboard">
+        <span id="wordcount">WORDS: 0</span>
+        <span id="scorecount">SCORE: 0000</span>
+      </div>
+      <div id="timer">01:20</div>
+      <board id="board">
+        <svg id="pathlayer"></svg>
+      </board>
+    </div>
+    <div id="landing">
+      <span
+        style="
+          position: absolute;
+          top: 32%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 12vw;
+          color: white;
+        "
+        >WORDHUNT</span
+      >
+      <button
+        style="top: 50%"
+        onclick="landing.classList.add('hide'); g = new Game(undefined, false)"
+      >
+        Singleplayer
+      </button>
+      <button style="top: 60%" disabled>Multiplayer</button>
+    </div>
+    <div id="ending" class="hide"></div>
+    <button id="settingsbut"></button>
+    <script src="list.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
