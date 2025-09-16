@@ -1,24 +1,33 @@
 var g;
 var dev = false;
 document.addEventListener("DOMContentLoaded", (e) => {
-  if (localStorage.game == undefined) {
+  if (document.location.search) {
+    var p = new URLSearchParams(document.location.search);
+    p = atob(p.get("g"));
+    p = p.split("");
+    g = new Game({ letters: p, time: 80, score: 0, words: [] }, true);
+    console.log(p);
   } else {
-    var game = JSON.parse(localStorage.game);
-    if (
-      window.confirm(
-        "You had a game previously, would you like to load that one?"
-      )
-    ) {
-      landing.classList.add("hide");
-      g = new Game(game, game.multiplayer);
+    if (localStorage.game == undefined) {
+    } else {
+      var game = JSON.parse(localStorage.game);
+      if (
+        window.confirm(
+          "You had a game previously, would you like to load that one?"
+        )
+      ) {
+        landing.classList.add("hide");
+        g = new Game(game, game.multiplayer);
+      }
     }
   }
 });
 class Game {
   constructor(game, multiplayer) {
+    // if (board) this.board = board; else
     this.board = [];
     if (game == undefined) {
-      this.time = 80;
+      this.time = 5;
       this.score = 0;
       this.words = [];
       this.genletters();
@@ -74,30 +83,53 @@ class Game {
     this.upd();
   }
   finish() {
-    ending.classList.remove('hide')
-    var wl = document.createElement('wordslist');
-    ending.appendChild(wl)
+    ending.classList.remove("hide");
+    var wl = document.createElement("wordslist");
+    ending.appendChild(wl);
     wl.style.top = "60%";
     var sb2 = scoreboard.cloneNode(true);
-    sb2.classList.add('sb2')
-    sb2.children[0].textContent = `WORDS: ${this.words.length}`
-    sb2.children[1].textContent = `SCORE: ${String(this.score).padStart(4, "0")}`
-    ending.appendChild(sb2)
-    var words = [...this.words].sort((a,b) => b.length - a.length)
+    sb2.classList.add("sb2");
+    sb2.children[0].textContent = `WORDS: ${this.words.length}`;
+    sb2.children[1].textContent = `SCORE: ${String(this.score).padStart(
+      4,
+      "0"
+    )}`;
+    ending.appendChild(sb2);
+    var words = [...this.words].sort((a, b) => b.length - a.length);
     for (var w of words) {
-        var l = document.createElement('div');
-        var wo = document.createElement('span');
-        wo.textContent = w.toUpperCase();
-        var s = document.createElement('span');
-        s.textContent = lengthvals[Math.min(8, w.length)]
-        s.style.color = "white";
-        s.style.right = "1vh";
-        s.style.position = "absolute"
-        l.appendChild(wo)
-        l.appendChild(s)
-        wl.appendChild(l)
+      var l = document.createElement("div");
+      var wo = document.createElement("span");
+      wo.textContent = w.toUpperCase();
+      var s = document.createElement("span");
+      s.textContent = lengthvals[Math.min(8, w.length)];
+      s.style.color = "white";
+      s.style.right = "1vh";
+      s.style.position = "absolute";
+      l.appendChild(wo);
+      l.appendChild(s);
+      wl.appendChild(l);
     }
-    localStorage.removeItem('game');
+    var s = document.createElement("button");
+    s.classList.add('share')
+    s.innerHTML = "Share"
+    s.onclick = () => {
+      const link =
+        document.location.hostname +
+        document.location.pathname +
+        "?g=" +
+        btoa(this.board.join(""));
+      share(link)
+      // navigator.clipboard
+      //   .writeText(link)
+      //   .then(() => {
+      //     alert("Link copied to clipboard!");
+      //   })
+      //   .catch((err) => {
+      //     console.error("Failed to copy: ", err);
+      //   });
+    };
+    document.body.appendChild(s)
+    localStorage.removeItem("game");
   }
   clearPath() {
     while (document.querySelectorAll("box.sel").length > 0)
@@ -169,7 +201,7 @@ class Game {
       this.words.includes(word.toLowerCase())
         ? word
         : `${word}&nbsp;(+${lengthvals[Math.min(8, word.length)]})`;
-        drawPath(this.path);
+    drawPath(this.path);
   }
   endPath() {
     const result = this.path;
@@ -198,16 +230,19 @@ class Game {
   quickupd() {
     wordcount.textContent = `WORDS: ${this.words.length}`;
     for (let i = 0; i < 10; i++) {
-        setTimeout(() => {
-            let s = ""
-            for (let i = 0; i < String(this.score).length; i++) s += Math.floor(Math.random()*10)
-            scorecount.textContent = `SCORE: ${s.padStart(4, "0")}`
-        }, i*20)
+      setTimeout(() => {
+        let s = "";
+        for (let i = 0; i < String(this.score).length; i++)
+          s += Math.floor(Math.random() * 10);
+        scorecount.textContent = `SCORE: ${s.padStart(4, "0")}`;
+      }, i * 20);
     }
-    setTimeout(() => {scorecount.textContent = `SCORE: ${String(this.score).padStart(4, "0")}`}, 201);
+    setTimeout(() => {
+      scorecount.textContent = `SCORE: ${String(this.score).padStart(4, "0")}`;
+    }, 201);
   }
   upd() {
-    this.time--
+    this.time--;
     var letters = "";
     for (var r in this.board) for (var c of this.board[r]) letters += c;
     if (!dev)
@@ -222,7 +257,7 @@ class Game {
       this.time % 60
     ).padStart(2, "0")}`;
     if (this.time == 10) {
-        tick.play()
+      tick.play();
     }
     if (this.time > 0)
       setTimeout(() => {
@@ -308,13 +343,22 @@ function drawPath(els) {
   pathLine.setAttribute("points", pts);
 }
 function clearPath() {
-  if (pathLine) pathLine.setAttribute('points', '');
-//   if (endDot) endDot.style.display = 'none';
+  if (pathLine) pathLine.setAttribute("points", "");
+  //   if (endDot) endDot.style.display = 'none';
 }
 if (dev) {
-    var g = new Game();
-    landing.classList.add('hide')
-    g.words = ['water','magic','tether','ninja','tea','bush']
-    g.score = 4300
-    g.finish()
+  var g = new Game();
+  landing.classList.add("hide");
+  g.words = ["water", "magic", "tether", "ninja", "tea", "bush"];
+  g.score = 4300;
+  g.finish();
+}
+function share(url) {
+  const shareData = {
+    title: "WordHunt",
+    url: url
+  }
+  if (navigator.share) {
+    navigator.share(shareData).then(() => console.log("Shared Successfully")).catch(err => console.error("Error sharing:", err))
+  }
 }
